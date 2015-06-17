@@ -102,7 +102,7 @@ openstack和ubuntu的版本发布同步，半年一版，2014年10月的Juno版�
 
 ##2.3.	应该怎么用
 
-![1](/public/img/os_framework.jpg)
+![1](/public/img/openstack/os_framework.jpg)
 
  
 openstack部署图
@@ -157,11 +157,14 @@ http://www.cnblogs.com/popsuper1982/p/3927390.html
 
 ##3.2.	虚拟机创建的流程
 
+![1](/public/img/openstack/vm_create_flow.jpg)
  
 图画的还行，用其他工具放大了看吧。
 看的时候注意分清哪些是步骤，哪些是涉及的知识点，这么画到一起比较乱，看下面这个好多了。
 
  
+![1](/public/img/openstack/vm_create_flow2.jpg)
+
 虚拟机创建流程图，每一步的描述参考：http://www.cnblogs.com/popsuper1982/p/3800426.html
 
 注：和openstack官方的nova开发者网站描述一致。注意在虚拟机创建开始前，镜像，网络，存储都是实现创建配置好的。
@@ -246,15 +249,18 @@ qemu-img convert -f raw -O qcow2 centos64.dsk centos64.qcow2
 ###3.5.1.	物理机调度
 输入：http://blog.csdn.net/networm3/article/details/8783667
  
+![1](/public/img/openstack/host_filter.jpg) 
+ 
 物理机调度是由nova-scheduler进行的。
 调度分两部，Filter过滤和Weighting排序
 	Filter过滤，有两个输入，镜像和flavor。根据镜像的格式，既hypervisor的类型；根据flaver中指定的cpu,memeory,disk等规格 对物理机进行过滤，选出满足要求的物理机。
 	Weighting排序	进行虚机消耗权值的计算。通过指定的权值计算算法，计算在某物理节点上申请这个虚机所必须的消耗cost，物理节点越不适合这个虚机，消耗cost就越大，权值Weight就越大，调度算法会选择权值最小的主机。比如说在一台低性能主机上创建一台功能复杂的高级虚拟机的代价是高的。配置文件中默认的算法是主机的剩余内存越大，权值越低，就越容易被选上。
 
 OpenStack默认支持多种过滤策略，如CoreFilter（CPU数过滤策略）、RamFilter（Ram值选择策略）、AvailabilityZoneFilter（指定集群内主机策略）、JsonFiliter（JSON串指定规则策略）。开发者也可以实现自己的过滤策略。在nova.scheduler.filters包中的过滤器有以下几种：
+ ![1](/public/img/openstack/nova-sheduler-filters.jpg) 
  
 物理机调度使用了设计模式中的Strategy模式（策略模式），UML图如下
- 
+![1](/public/img/openstack/nova_filter_uml.jpg)  
 
 
 补充：
